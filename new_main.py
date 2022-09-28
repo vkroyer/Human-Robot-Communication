@@ -192,7 +192,7 @@ def listen_print_loop(responses, stream):
         if not result.alternatives:
             continue
 
-        transcripts = [result.alternatives[i].transcript for i in range(len(result.alternatives))]
+        transcript = result.alternatives[0].transcript
 
         result_seconds = 0
         result_micros = 0
@@ -217,25 +217,25 @@ def listen_print_loop(responses, stream):
 
             sys.stdout.write(GREEN)
             sys.stdout.write("\033[K")
-            sys.stdout.write(str(corrected_time) + ": " + transcripts[0] + "\n")
+            sys.stdout.write(str(corrected_time) + ": " + transcript + "\n")
 
             stream.is_final_end_time = stream.result_end_time
             stream.last_transcript_was_final = True
 
             # Exit recognition if any of the transcribed phrases could be
             # one of our keywords.
-            if re.search(r"\b(die|quit|kill yourself)\b", transcripts[0], re.I):
+            if re.search(r"\b(die|quit|kill yourself)\b", transcript, re.I):
                 sys.stdout.write(YELLOW)
                 sys.stdout.write("Exiting...\n")
                 stream.closed = True
                 break
 
-            return transcripts
+            return transcript
 
         else:
             sys.stdout.write(RED)
             sys.stdout.write("\033[K")
-            sys.stdout.write(str(corrected_time) + ": " + transcripts[0] + "\r")
+            sys.stdout.write(str(corrected_time) + ": " + transcript + "\r")
 
             stream.last_transcript_was_final = False
 
@@ -253,7 +253,7 @@ def main():
     )
 
     streaming_config = speech.StreamingRecognitionConfig(
-        config=config, interim_results=True
+        config=config, single_utterance=True, interim_results=True
     )
 
     mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
@@ -282,7 +282,7 @@ def main():
             responses = client.streaming_recognize(streaming_config, requests)
 
             # Now, put the transcription responses to use.
-            transcripts = listen_print_loop(responses, stream)
+            transcript = listen_print_loop(responses, stream)
 
             if stream.result_end_time > 0:
                 stream.final_request_end_time = stream.is_final_end_time
@@ -297,7 +297,7 @@ def main():
             stream.new_stream = True
 
             if not stream.closed:
-                done = handle_voice_input(transcripts)
+                done = handle_voice_input(transcript)
                 if done:
                     stream.closed = True
 
@@ -328,7 +328,7 @@ if __name__ == "__main__":
 
     # wait_for_face_detection()
 
-    print("\nHello, I'm a receptionist robot, you can ask me for directions to a professor's office.") # Robot starting interaction with human
     play("greet.mp3") # Plays the audio file
+    print("\nHello, I'm a receptionist robot, you can ask me for directions to a professor's office.") # Robot starting interaction with human
 
     main()

@@ -11,7 +11,7 @@ from six.moves import queue
 
 import time
 
-from dialogue import handle_voice_input
+from new_dialogue import handle_voice_input
 
 
 # Audio recording parameters
@@ -86,7 +86,7 @@ class MicrophoneStream(object):
             yield b"".join(data)
 
 
-def listen_print_loop(responses):
+def listen_print_loop(responses, stream):
     """Iterates through server responses and prints them.
 
     The responses passed is a generator that will block until a response
@@ -141,6 +141,7 @@ def listen_print_loop(responses):
 
             num_chars_printed = 0
             
+            stream.closed = True
             handle_voice_input(transcript+overwrite_chars)
 
 
@@ -165,20 +166,21 @@ def main():
     )
 
     streaming_config = speech.StreamingRecognitionConfig(
-        config=config, interim_results=True
+        config=config, single_utterance=True, interim_results=True
     )
 
-    with MicrophoneStream(RATE, CHUNK) as stream:
-        audio_generator = stream.generator()
-        requests = (
-            speech.StreamingRecognizeRequest(audio_content=content)
-            for content in audio_generator
-        )
+    while True: # Stream is closed while transcript is processed until a response is given, then opened again in the while True loop. 
+        with MicrophoneStream(RATE, CHUNK) as stream:
+            audio_generator = stream.generator()
+            requests = (
+                speech.StreamingRecognizeRequest(audio_content=content)
+                for content in audio_generator
+            )
 
-        responses = client.streaming_recognize(streaming_config, requests)
+            responses = client.streaming_recognize(streaming_config, requests)
 
-        # Now, put the transcription responses to use.
-        listen_print_loop(responses)
+            # Now, put the transcription responses to use.
+            listen_print_loop(responses, stream)
 
 
 import serial
@@ -202,7 +204,7 @@ def wait_for_face_detection():
 
 if __name__ == "__main__":
 
-    wait_for_face_detection()
+    # wait_for_face_detection()
 
     print("\n", greeting) # Robot starting interaction with human
     play("greet.mp3") # Plays the audio file

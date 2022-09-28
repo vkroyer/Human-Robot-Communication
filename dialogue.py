@@ -30,7 +30,7 @@ def handle_voice_input(utterance):
     for word in utterance.strip(",.!?"):
         if word in LAST_ROBOT_UTTERANCE.strip(",.!?"):
             equal_count += 1
-    if equal_count >= 0.7 * len(LAST_ROBOT_UTTERANCE):
+    if equal_count >= 0.7 * len(LAST_ROBOT_UTTERANCE) and not any([answer in utterance for answer in variations_of_no + variations_of_yes]):
         print("Probably the robot's voice")
         return
 

@@ -10,11 +10,11 @@ LAST_QUESTION = ""
 NAME_VOICE_INPUT = ""
 REPEAT_COUNTER = 0
 SLEEP_TIME = 1.5 # seconds
-IGNORE_SENSITIVITY = 0.7 # between 0 and 1 (0 will ignore everything, 1 will only ignore if transcript is exactly like last robot utterance)
+IGNORE_SENSITIVITY = 0.5 # between 0 and 1 (0 will ignore everything, 1 will only ignore if transcript is exactly like last robot utterance)
 
 ###############################
 
-def handle_voice_input(transcripts):
+def handle_voice_input(transcript):
     """Based on the user input provided by Google speech-to-text,
     this function will provide answers and play the corresponding mp3 files.
 
@@ -26,21 +26,21 @@ def handle_voice_input(transcripts):
     global NAME_VOICE_INPUT
     global REPEAT_COUNTER
 
-    transcripts = [transcript.lower() for transcript in transcripts] # ignore uppercase letters in Google's speech-to-text
+    transcript = transcript.lower() # ignore uppercase letters in Google's speech-to-text
 
     # Ignore robot's own voice
     equal_count = 0
-    for word in transcripts[0].strip(",.!?"):
+    for word in transcript.strip(",.!?"):
         if word in LAST_ROBOT_UTTERANCE.strip(",.!?"):
             equal_count += 1
-    if equal_count >= IGNORE_SENSITIVITY * len(LAST_ROBOT_UTTERANCE):
+    if equal_count >= IGNORE_SENSITIVITY * len(LAST_ROBOT_UTTERANCE) and not any([answer in transcript for answer in variations_of_no+variations_of_yes]):
         print("Probably the robot's own voice. IGNORED.")
         return False
 
     # Handle variations of questions for directions
-    if any([[question in transcript for question in directions_questions] for transcript in transcripts]):
+    if any([question in transcript for question in directions_questions]):
         for name, name_variations in names_dict.items():
-            if any([name_variation in transcripts[0] for name_variation in name_variations]):
+            if any([name_variation in transcript for name_variation in name_variations]):
                 question = utterance_dict[f"{name}_validation"]
                 print(question)
                 play_mp3(f"{name}_validation.mp3") # Plays the audio file with the question
@@ -54,7 +54,7 @@ def handle_voice_input(transcripts):
             LAST_ROBOT_UTTERANCE = utterance_dict["not_understand"]
 
     # Handle the answer yes
-    elif any([[answer in transcript for answer in variations_of_yes] for transcript in transcripts]):
+    elif any([answer in transcript for answer in variations_of_yes]):
         
         # Human confirmed they want to go to said office
         if "Do you want to go to" in LAST_QUESTION:
@@ -72,13 +72,12 @@ def handle_voice_input(transcripts):
                 play_mp3(f"{NAME_VOICE_INPUT}_start_dir.mp3") # Plays the audio file
                 print(f"{directions_dict[NAME_VOICE_INPUT]}")
                 play_mp3(f"{NAME_VOICE_INPUT}_dir.mp3") # Plays the audio file
-                LAST_ROBOT_UTTERANCE = utterance_dict[f"{NAME_VOICE_INPUT}"] + directions_dict[NAME_VOICE_INPUT]
 
                 time.sleep(SLEEP_TIME) # give the human time to think first
                 question = utterance_dict["q_understand"]
                 print(question)
                 play_mp3("q_understand1.mp3") # Plays the audio file
-                LAST_ROBOT_UTTERANCE = question
+                LAST_ROBOT_UTTERANCE = utterance_dict[f"{NAME_VOICE_INPUT}_confirmation"] + directions_dict[NAME_VOICE_INPUT] + question
                 LAST_QUESTION = question
 
         # De Horst shortcut
@@ -104,7 +103,7 @@ def handle_voice_input(transcripts):
             return True
 
     # Handle the answer no
-    elif any([[answer in transcript for answer in variations_of_no] for transcript in transcripts]):
+    elif any([answer in transcript for answer in variations_of_no]):
         # The robot's validation question was wrong
         if "Do you want to go to" in LAST_QUESTION:
             LAST_ROBOT_UTTERANCE = utterance_dict["not_understand"]
