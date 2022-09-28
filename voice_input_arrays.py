@@ -23,6 +23,8 @@ names_dict = {
 directions_questions = [
     "how do i get to",
     "where is",
+    "where's",
+    "where",
     "can you tell me",
     "where can i find",
     "how can i",
@@ -31,7 +33,9 @@ directions_questions = [
     "can you show me",
     "please tell me",
     "please show me",
-    "what is the way"
+    "what is the way",
+    "how will i find",
+    "how should i"
 ]
 
 
