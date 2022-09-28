@@ -10,7 +10,7 @@ LAST_QUESTION = ""
 NAME_VOICE_INPUT = ""
 REPEAT_COUNTER = 0
 SLEEP_TIME = 1.5 # seconds
-IGNORE_SENSITIVITY = 0.5 # between 0 and 1 (0 will ignore everything, 1 will only ignore if transcript is exactly like last robot utterance)
+IGNORE_SENSITIVITY = 1 # between 0 and 1 (0 will ignore everything, 1 will only ignore if transcript is exactly like last robot utterance)
 
 ###############################
 
