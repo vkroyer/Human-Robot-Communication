@@ -1,7 +1,7 @@
-dirk = ["dirk","dirt","did","dick","date","turk","delete","duke","derek","direct","burke","eric","heylen","island","hilun","hate him","halen","hatem","hayden","salem"]
+dirk = ["dirk","dirt","did","dick","date","turk","dierk","delete","duke","derek","direct","burke","eric","heylen","island","hilun","hate him","halen","hatem","hayden","salem"]
 edwin = ["edwin","edmon","it's been","advent","enchantment","win","ed","has been","advan","dertien","dirty","denton","dental","tekton","texting","thirteen"]
-bob = ["bob","but","book","bump","bumps","bobb","box","schadenberg","to be fair","how to bear","edinburg","gothenburg","berg","pumpkinbag","sheldonbase","dragonboat","ruttenberg","strattenberg","dog skunk bath"]
-cristina = ["cristina","christina","ustina","kristina","justina","kris","chris","zaga","xaga","saga","sara","deza","zara"]
+bob = ["bob","but","book","bump","bumps","bobb","box","pop","schadenberg","to be fair","how to bear","edinburg","gothenburg","berg","pumpkinbag","sheldonbase","dragonboat","ruttenberg","strattenberg","dog skunk bath"]
+cristina = ["cristina","christina","ustina","kristina","justina","casino","kris","chris","zaga","xaga","saga","sara","deza","zara"]
 mariet = ["mariet","margret","margot","mullet","marriott","married","lafayette","marietta","maria","maggott","theune","tayne","china","turn off","tina","turn up","diner","taylor"]
 dennis = ["dennis","them is","tennis","dumbest","reidsma","reitsma","knightsma","h mark","guardsman","statesman","lights"]
 daniel = ["daniel","dan","onion","donald","dongle","dunhams","davison","davidson"]
@@ -35,7 +35,9 @@ directions_questions = [
     "please show me",
     "what is the way",
     "how will i find",
-    "how should i"
+    "how should i",
+    "show me",
+    "tell me"
 ]
 
 
@@ -46,6 +48,7 @@ variations_of_yes = [
     "yes",
     "yeah",
     "yup",
+    "yep",
     "alright",
     "des",
     "jess"
@@ -54,5 +57,6 @@ variations_of_yes = [
 variations_of_no = [
     "no",
     "nope",
-    "nei"
+    "nei",
+    "nah"
 ]

@@ -67,7 +67,7 @@ def handle_voice_input(transcript):
                 LAST_QUESTION = question
 
             # Giving directions
-            if NAME_VOICE_INPUT in directions_dict.keys():
+            elif NAME_VOICE_INPUT in directions_dict.keys():
                 print(utterance_dict[f"{NAME_VOICE_INPUT}_confirmation"])
                 play_mp3(f"{NAME_VOICE_INPUT}_start_dir.mp3") # Plays the audio file
                 print(f"{directions_dict[NAME_VOICE_INPUT]}")
@@ -82,11 +82,11 @@ def handle_voice_input(transcript):
 
         # De Horst shortcut
         elif "Do you already know how to get to" in LAST_QUESTION:
+            NAME_VOICE_INPUT = "cristina_shortcut"
             print(utterance_dict["cristina_confirmation"])
-            play_mp3(f"{NAME_VOICE_INPUT}_shortcut_start_dir.mp3") # Plays the audio file
-            LAST_ROBOT_UTTERANCE = directions_dict[NAME_VOICE_INPUT]
+            play_mp3(f"{NAME_VOICE_INPUT}_start_dir.mp3") # Plays the audio file
             print(directions_dict[NAME_VOICE_INPUT])
-            play_mp3(f"{NAME_VOICE_INPUT}_shortcut_dir.mp3") # Plays the audio file
+            play_mp3(f"{NAME_VOICE_INPUT}_dir.mp3") # Plays the audio file
 
             time.sleep(SLEEP_TIME) # give the human time to think first
             question = utterance_dict["q_understand"]
@@ -112,15 +112,17 @@ def handle_voice_input(transcript):
             LAST_QUESTION = "" # Reset the variable to avoid unwanted robot dialogue later
 
         # De Horst longcut
-        elif "Do you already know your way" in LAST_QUESTION:
+        elif "Do you already know how to get to" in LAST_QUESTION:
+            NAME_VOICE_INPUT = "cristina_longcut"
             print(utterance_dict["cristina_confirmation"])
-            play_mp3(f"{NAME_VOICE_INPUT}_longcut_start_dir.mp3") # Plays the audio file
+            play_mp3(f"{NAME_VOICE_INPUT}_start_dir.mp3") # Plays the audio file
             print(directions_dict[NAME_VOICE_INPUT])
-            play_mp3(f"{NAME_VOICE_INPUT}_longcut_dir.mp3") # Plays the audio file
+            play_mp3(f"{NAME_VOICE_INPUT}_dir.mp3") # Plays the audio file
 
             time.sleep(SLEEP_TIME) # give the human time to think first
             question = utterance_dict["q_understand"]
             print(question)
+            play_mp3("q_understand1.mp3")
             LAST_ROBOT_UTTERANCE = utterance_dict["cristina_confirmation"] + directions_dict[NAME_VOICE_INPUT] + question
             LAST_QUESTION = question
 
@@ -145,6 +147,7 @@ def handle_voice_input(transcript):
                 print(utterance_dict["bye"])
                 play_mp3("bye.mp3")
                 LAST_ROBOT_UTTERANCE = utterance_dict["recommend"] + utterance_dict["bye"]
+                return True
                 
 
     else:

@@ -142,7 +142,7 @@ def listen_print_loop(responses, stream):
             num_chars_printed = 0
             
             stream.closed = True
-            handle_voice_input(transcript+overwrite_chars)
+            return handle_voice_input(transcript+overwrite_chars)
 
 
 from playsound import playsound
@@ -169,7 +169,8 @@ def main():
         config=config, single_utterance=True, interim_results=True
     )
 
-    while True: # Stream is closed while transcript is processed until a response is given, then opened again in the while True loop. 
+    finished = False
+    while not finished: # Stream is closed while transcript is processed until a response is given, then opened again in the while loop. 
         with MicrophoneStream(RATE, CHUNK) as stream:
             audio_generator = stream.generator()
             requests = (
@@ -180,7 +181,8 @@ def main():
             responses = client.streaming_recognize(streaming_config, requests)
 
             # Now, put the transcription responses to use.
-            listen_print_loop(responses, stream)
+            if listen_print_loop(responses, stream):
+                finished = True
 
 
 import serial
@@ -204,7 +206,7 @@ def wait_for_face_detection():
 
 if __name__ == "__main__":
 
-    # wait_for_face_detection()
+    wait_for_face_detection()
 
     print("\n", greeting) # Robot starting interaction with human
     play("greet.mp3") # Plays the audio file
