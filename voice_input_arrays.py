@@ -40,7 +40,9 @@ directions_questions = [
     "how will i find",
     "how should i",
     "show me",
-    "tell me"
+    "tell me",
+    "i want to go",
+    "i would like to go"
 ]
 
 
