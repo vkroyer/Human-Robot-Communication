@@ -2,7 +2,6 @@ from __future__ import division
 
 import re
 import sys
-from tkinter import LAST
 
 from google.cloud import speech
 
