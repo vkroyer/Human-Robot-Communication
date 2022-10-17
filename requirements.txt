@@ -1,3 +1,6 @@
-playsound==1.2.2
+google-cloud-speech
 google-cloud-texttospeech
 google-cloud-dialogflow-cx
+
+playsound==1.2.2
+pyserial
