@@ -49,6 +49,9 @@ long timer1, timer2, timer3;
 bool pc_connected = false;
 float servo1_target_pc = 90, servo2_target_pc = 90;
 
+
+int mode = 1;
+
 // --------------------------------------------------------------------------------- //
 // ---------------------------------- EYE PATTERNS --------------------------------- //
 // --------------------------------------------------------------------------------- //
@@ -170,7 +173,7 @@ void loop() {
   // Every 10 milliseconds, update the huskylens and touch sensor
   if (millis() - timer2 >= 10){
     timer2 = millis();
-    //communication();
+    // communication();
     read_mode();
   }
 }
@@ -179,30 +182,34 @@ void loop() {
 // ------------------------------- SERIAL MODEPICKER ------------------------------- //
 // --------------------------------------------------------------------------------- //
 void read_mode(){
-  int mode_pick = 1;
-  int incomingByte = 0;
+  String data = "";
   if (Serial.available() > 0) {
-    incomingByte = Serial.read();
-    Serial.print("Recieved byte: ");
-    Serial.println(incomingByte, DEC);
+    data = Serial.readString();
+    if (data=="" || data.toInt()>5 || data.toInt()<1){
+      return;
+    }
+    mode = data.toInt();
+    // if (mode < 1 || mode > 5){
+    //   return;
+    // }
+    Serial.print("Recieved mode: ");
+    Serial.println(mode);
   }
-//  mode_pick = val - '0';
-//  Serial.println(mode_pick);
   
-  switch (incomingByte) {
-    case 49:
+  switch (mode) {
+    case 1:
       emotion = NEUTRAL;
       break;
-    case 50:
+    case 2:
       emotion = ANGRY;
       break;
-    case 51:
+    case 3:
       emotion = SURPRISED;
       break;
-    case 52:
+    case 4:
       emotion = SAD;
       break;
-    case 53:
+    case 5:
       emotion = HAPPY;
       break;
   }
@@ -224,8 +231,8 @@ void run_emotions(){
       servo1_target = 90;
       servo2_target = 90;
       if (millis() % 5000 < 150) display_eyes(blink1, 150, neutralBrightness);
-      else if (millis() % 5000 < 300) display_eyes(blink2, 200, neutralBrightness);
-      else if (millis() % 5000 < 450) display_eyes(blink1, 250, neutralBrightness);
+      else if (millis() % 5000 < 300) display_eyes(blink2, 150, neutralBrightness);
+      else if (millis() % 5000 < 450) display_eyes(blink1, 150, neutralBrightness);
       else display_eyes(neutral, 150, neutralBrightness);
       break;
     case HAPPY:
