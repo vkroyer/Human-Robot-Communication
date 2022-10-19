@@ -13,4 +13,4 @@ Need to make a Google project and activate the Google Cloud APIs:
 
 ``pip install --upgrade google-cloud-texttospeech``
 
-``pip install --upgrade google-cloud-dialogflow-cx``
+``pip install --upgrade google-cloud-dialogflow``

@@ -1,0 +1,5 @@
+IDEAS
+
+different settings to tweak by talking with the robot: how interactive, pomodoro timer, stuff
+
+sentiment analysis using either the words in the sentence, or the audio spectrum features that might provide more context for sentiment

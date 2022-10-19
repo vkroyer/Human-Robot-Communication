@@ -1,0 +1,31 @@
+  
+#######################################
+# Syntax Coloring Map For 
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+SelectPlayerDevice	KEYWORD2
+SpecifyMusicPlay	KEYWORD2
+SpecifyfolderPlay	KEYWORD2
+PlayPause	KEYWORD2
+PlayResume	KEYWORD2
+PlayNext	KEYWORD2
+PlayPrevious	KEYWORD2
+PlayLoop	KEYWORD2
+SetVolume	KEYWORD2
+IncreaseVolume	KEYWORD2
+DecreaseVolume	KEYWORD2
+QueryPlayStatus	KEYWORD2
+printReturnedData	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################

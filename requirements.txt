@@ -1,6 +1,6 @@
 google-cloud-speech
 google-cloud-texttospeech
-google-cloud-dialogflow-cx
+google-cloud-dialogflow
 
 playsound==1.2.2
 pyserial
