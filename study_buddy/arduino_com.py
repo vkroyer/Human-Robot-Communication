@@ -1,43 +1,8 @@
-# import time
-# import serial
-
-
-# def read_data(baudrate=9600):
-#     arduino_data = serial.Serial("com9", baudrate=baudrate)
-
-#     time.sleep(1)
-
-#     while True:
-#         while arduino_data.inWaiting() == 0:
-#             pass
-#         data_packet = arduino_data.readline()
-#         datastr = str(data_packet, "utf-8").strip("\r\n")
-#         print(datastr)
-
-
-# def write_data(baudrate=9600):
-#     arduino = serial.Serial(port='COM9', baudrate=baudrate, timeout=.1)
-#     def write_read(x):
-#         arduino.write(bytes(x, "utf-8"))
-#         time.sleep(0.05)
-#         data = arduino.readline()
-#         return data
-#     while True:
-#         stuff = input("Enter stuff: ") # Taking input from user
-#         print(f"Stuff from Python: {stuff}")
-#         value = write_read(stuff)
-#         print(f"Stuff back from Arduino: {value}") # printing the value
-
-
-# if __name__ == "__main__":
-#     # read_data(baudrate=115200)
-#     write_data(baudrate=115200)
 
 import serial
 import time
 
 arduino = serial.Serial(port='COM9', baudrate=115200, timeout=.1)
-
 
 def write_read(x):
     arduino.write(bytes(x, 'utf-8'))
@@ -45,8 +10,44 @@ def write_read(x):
     data = arduino.readline()
     return data
 
+def intent_detection():
+    currently_rubberduck = False
+    from intent import detect_intent_text
+    while True:
+        text = input("\nEnter some phrase: ")
+        try:
+            if text == "Go to sleep" and currently_rubberduck:
+                mode = "0"
+            else:
+                mode = detect_intent_text(text)
+            currently_rubberduck = True if mode=="2" else False
+            value = write_read(mode)
+            print(str(value, "utf-8"))
+        except KeyError:
+            print("Couldn't detect an intent")
 
-while True:
-    num = input("Enter a number: ")
-    value = write_read(num)
-    print(str(value, "utf-8"))
+def simple_commands():
+    while True:
+        mode = input("\nEnter the mode (0, 1, 2, 3, or 4): ")
+        if mode in "0 1 2 3 4".split():
+            value = write_read(mode)
+            print(str(value, "utf-8"))
+        else:
+            print("Choose a valid mode number")
+
+def main():
+    print("\nCHOOSE HOW TO SEND THE COMMANDS TO THE ARDUINO:\nFor simple commands (0,1,2,3,4), write 1\nFor intent detection with Google, write 2")
+    while True:
+        try:
+            choice = int(input(">"))
+            if choice in [1,2]:
+                break
+        except ValueError:
+            print("Input number 1 or 2")
+    if choice == 1:
+        simple_commands()
+    elif choice == 2:
+        intent_detection()
+
+if __name__  == "__main__":
+    main()
