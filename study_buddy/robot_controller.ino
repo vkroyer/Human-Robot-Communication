@@ -114,6 +114,16 @@ byte sad[] = {
   B1111
 };
 
+byte dead[] = {
+  B0000,
+  B00000,
+  B000000,
+  B0000000,
+  B000000,
+  B00000,
+  B0000
+};
+
 // --------------------------------------------------------------------------------- //
 // ----------------------------------- VARIABLES ----------------------------------- //
 // --------------------------------------------------------------------------------- //
@@ -134,14 +144,12 @@ byte sad[] = {
 SoftwareSerial mp3(2, 3);                     // The MP3 module is connected on pins 2 and 3
 Adafruit_NeoPixel pixels(NUMPIXELS, LED_PIN);
 
-//int LED_BRIGHTNESS = 2;  // 0-255
-
 HUSKYLENS huskylens;
 HUSKYLENSResult face;
 bool face_detected = false;
 bool prev_touch_value = 0;
 
-enum Emotion {NEUTRAL, ANGRY, RUBBERDUCK, SAD, HAPPY};
+enum Emotion {NEUTRAL, ANGRY, RUBBERDUCK, SAD, HAPPY, DEAD};
 Emotion emotion = NEUTRAL;
 
 Servo servo1, servo2;
@@ -158,6 +166,7 @@ int prev_mode = 1;
 int mode = 1;
 long mode_timer;
 
+bool running = true;
 
 // --------------------------------------------------------------------------------- //
 // ------------------------------------- SETUP ------------------------------------- //
@@ -197,38 +206,51 @@ void loop() {
   // Ever 20 milliseconds, update the servos
   if (millis() - timer1 >= 20){
     timer1 = millis();
-    move_servos();
-    husky_lens();
     run_emotions();
+    husky_lens();
+    if (running) {
+      move_servos();
+    }
   }
 
-  // Every 10 milliseconds, update the huskylens and touch sensor
+  // Every 10 milliseconds, do stuff
   if (millis() - timer2 >= 10){
     timer2 = millis();
-    // communication();
-    read_mode();
+    mode = read_mode();
+    if (mode != -1) {
+      change_mode(mode);
+    }
   }
 }
 
 // --------------------------------------------------------------------------------- //
 // ------------------------------- SERIAL MODE PICKER ------------------------------ //
 // --------------------------------------------------------------------------------- //
-void read_mode(){
+int read_mode(){
   String data = "";
   if (Serial.available() > 0) {
     data = Serial.readString();
-    if (data=="" || data.toInt()>4 || data.toInt()<0){
-      return;
+    if (data=="" || data.toInt()>5 || data.toInt()<0){
+      return -1;
+    }
+    else if (data.toInt()==5) {
+      running = false;
+    }
+    else {
+      running = true;
     }
     mode = data.toInt();
 
     Serial.print("Recieved mode: ");
     Serial.println(mode);
+    return mode;
   }
-  
+}
+
+void change_mode(int mode) {
   // Switch back to neutral mode after a specified number of seconds
   int seconds_in_mode = 5;
-  if (millis()-mode_timer > 1000*seconds_in_mode && mode==prev_mode && mode!=RUBBERDUCK) {
+  if (millis()-mode_timer > 1000*seconds_in_mode && mode==prev_mode && mode!=RUBBERDUCK && mode!=DEAD) {
     emotion = NEUTRAL;
     return;
   } else if (mode == prev_mode) {
@@ -245,7 +267,6 @@ void read_mode(){
       break;
     case RUBBERDUCK:
       emotion = RUBBERDUCK;
-      // mode_timer = millis();
       break;
     case SAD:
       emotion = SAD;
@@ -255,12 +276,11 @@ void read_mode(){
       emotion = HAPPY;
       mode_timer = millis();
       break;
+    case DEAD:
+      emotion = DEAD;
+      break;
   }
-
   prev_mode = mode;
-
-  // Serial.print("Current mode: ");
-  // Serial.println(emotion);
 }
 
 // --------------------------------------------------------------------------------- //
@@ -270,9 +290,9 @@ void run_emotions(){
   pixels.clear();
 
   int neutralBrightness = 2;
-  int duckyBrightness = 8;
-  int attentionBrightness = 15;
-  int angryBrightness = 100;
+  int duckyBrightness = 6;
+  int attentionBrightness = 6;
+  int angryBrightness = 60;
 
   switch (emotion) {
     case NEUTRAL:
@@ -302,9 +322,6 @@ void run_emotions(){
       servo2_target = 110 + 15.0 * cos(millis() / 175.00);
       break;
     case RUBBERDUCK:
-    //   if (millis() % 5000 < 150) display_eyes(blink1, 37, duckyBrightness);
-    //   else if (millis() % 5000 < 300) display_eyes(blink2, 37, duckyBrightness);
-    //   else if (millis() % 5000 < 450) display_eyes(blink1, 37, duckyBrightness);
       if (millis() % 5000 < 50) display_eyes(blinkbig1, 37, duckyBrightness);
       else if (millis() % 5000 < 100) display_eyes(blinkbig2, 37, duckyBrightness);
       else if (millis() % 5000 < 150) display_eyes(blinkbig3, 37, duckyBrightness);
@@ -316,6 +333,9 @@ void run_emotions(){
         servo1_target = 90.0 + float(face.xCenter - 160) / 320.00 * -50.00;
         servo2_target = 90.0 + float(face.yCenter - 120) / 240.00 * 50.00;
       }
+      break;
+    case DEAD:
+      display_eyes(dead, 0, 0);
       break;
   }
 
@@ -369,6 +389,7 @@ void husky_lens() {
         if (face_index == 0 || result.ID == 1) face = result;
         face_index ++;
         face_detected = true;
+        Serial.println("face detected");
       }
     }
 //    Serial.println(String() + F("Block:xCenter=") + face.xCenter + F(",yCenter=") + face.yCenter + F(",width=") + face.width + F(",height=") + face.height + F(",ID=") + face.ID);

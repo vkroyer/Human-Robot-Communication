@@ -1,8 +1,10 @@
 modes = {
     "Tired": "0",
+    "Rubber finish": "0",
     "Rubber duck": "2",
     "Sad": "3",
-    "Happy": "4"
+    "Happy": "4",
+    "End": "5"
 }
 
 def detect_intent_text(text, project_id="human-robot-com", session_id="123456789", language_code="en-US"):
@@ -12,7 +14,7 @@ def detect_intent_text(text, project_id="human-robot-com", session_id="123456789
     of the conversation."""
     
     if text == "":
-        return
+        return ""
     
     from google.cloud import dialogflow
 
@@ -36,9 +38,11 @@ def detect_intent_text(text, project_id="human-robot-com", session_id="123456789
             (confidence: {response.query_result.intent_detection_confidence})"
     )
     print(f"Fulfillment text: {response.query_result.fulfillment_text}")
-
-    mode = modes[response.query_result.intent.display_name]
-    return mode
+    try:
+        mode = modes[response.query_result.intent.display_name]
+        return mode
+    except KeyError:
+        return ""
 
 # print(detect_intent_text("Fuck this shit"))
 

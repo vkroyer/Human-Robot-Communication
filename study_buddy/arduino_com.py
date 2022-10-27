@@ -28,15 +28,15 @@ def intent_detection():
 
 def simple_commands():
     while True:
-        mode = input("\nEnter the mode (0, 1, 2, 3, or 4): ")
-        if mode in "0 1 2 3 4".split():
+        mode = input("\nEnter the mode (0, 1, 2, 3, 4, or 5): ")
+        if mode in "0 1 2 3 4 5".split():
             value = write_read(mode)
             print(str(value, "utf-8"))
         else:
             print("Choose a valid mode number")
 
 def main():
-    print("\nCHOOSE HOW TO SEND THE COMMANDS TO THE ARDUINO:\nFor simple commands (0,1,2,3,4), write 1\nFor intent detection with Google, write 2")
+    print("\nCHOOSE HOW TO SEND THE COMMANDS TO THE ARDUINO:\nFor simple commands (0,1,2,3,4,5), write 1\nFor intent detection with Google, write 2")
     while True:
         try:
             choice = int(input(">"))
